@@ -17,7 +17,12 @@ en_passant_square = 0
 history = []
 promotion_piece = 0
 checking_pieces = 0
-while True:  # change this to while not checkmate later
+legal_moves = all_legal_moves(board, move_number, en_passant_square, king_w, king_b, rook_w_l,
+                              rook_w_r,
+                              rook_b_l,
+                              rook_b_r)
+while not checkmate(board, move_number,
+                    checking_pieces) and not stalemate(legal_moves):  # change this to while not checkmate later
     # move_number is auto added 1 whenever update_board() is called
     move = str(input("Enter your move:")).split()
     if move[0] == "O-O":
@@ -75,20 +80,19 @@ while True:  # change this to while not checkmate later
             en_passant_square = 0
         show_board(board)
         move_number += 1
-        print(all_legal_moves(board, move_number, en_passant_square, king_w, king_b, rook_w_l,
-                              rook_w_r,
-                              rook_b_l,
-                              rook_b_r))
+        legal_moves = all_legal_moves(board, move_number, en_passant_square, king_w, king_b, rook_w_l,
+                                      rook_w_r,
+                                      rook_b_l,
+                                      rook_b_r)
+        print(legal_moves)
         if check(board, move_number):
-            # print(move_number)
-            # checking_pieces = pieces_controlled_squares(board, move_number)
+            checking_pieces = pieces_controlled_squares(board, move_number)
             print("Check!")
-            # if checkmate(board, move_number, checking_pieces):
-            #   print("Checkmate!")
-            # else:
-            #   checking_pieces = 0
-        # if stalemate(all_legal_moves(board, move_number, en_passant_square)):
-        # print("Stalemate!")
-        # exit()
+            if checkmate(board, move_number, checking_pieces):
+                print("Checkmate!")
+            else:
+                checking_pieces = 0
+        elif stalemate(legal_moves):
+            print("Stalemate!")
 
     # when its check your move must be in king poss or the square of checking piece and it should not be check still
