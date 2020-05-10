@@ -29,31 +29,34 @@ def legal_pawn_moves(board, start, move_number):
     if switch_player(move_number):
         if start[0] == 2:
             if check_square(board, [start[0] + 1, start[1]]) == ".":
-                pawn_moves_w.append((start[0] + 1, start[1]))
+                pawn_moves_w.append((start, [start[0] + 1, start[1]]))
                 if check_square(board, [start[0] + 2, start[1]]) == ".":
-                    pawn_moves_w.append((start[0] + 2, start[1]))
+                    pawn_moves_w.append((start, [start[0] + 2, start[1]]))
         elif start[0] != 2:
             if check_square(board, [start[0] + 1, start[1]]) == "." and start[0] + 1 <= 8:
-                pawn_moves_w.append((start[0] + 1, start[1]))
+                pawn_moves_w.append((start, [start[0] + 1, start[1]]))
 
         if check_square(board, [start[0] + 1, start[1] - 1]):
             if 97 <= ord(check_square(board, [start[0] + 1, start[1] - 1])) <= 122 and 0 <= start[1] - 1 <= 8 \
                     and start[0] + 1 <= 8:
-                pawn_moves_w.append((start[0] + 1, start[1] - 1))
+                pawn_moves_w.append((start, [start[0] + 1, start[1] - 1]))
         if check_square(board, [start[0] + 1, start[1] + 1]):
             if 97 <= ord(check_square(board, [start[0] + 1, start[1] + 1])) <= 122 and 0 <= start[1] + 1 <= 8 \
                     and start[0] + 1 <= 8:
-                pawn_moves_w.append((start[0] + 1, start[1] + 1))
+                pawn_moves_w.append((start, [start[0] + 1, start[1] + 1]))
         if check(board, move_number):
             new_legal_moves = []
             for i in range(0, len(pawn_moves_w)):
-                initial_piece = find_piece(board, pawn_moves_w[i])
-                update_board(test_board, start, pawn_moves_w[i])
+                end_square = pawn_moves_w[i][1]
+                # print("square is:", pawn_moves_w[i])
+                # print("end square is:", end_square)
+                initial_piece = find_piece(board, end_square)
+                update_board(test_board, start, end_square)
                 if not check(test_board, move_number):
                     new_legal_moves.append(pawn_moves_w[i])
-                    retract_move(test_board, start, pawn_moves_w[i], initial_piece)
+                    retract_move(test_board, start, end_square, initial_piece)
                 else:
-                    retract_move(test_board, start, pawn_moves_w[i], initial_piece)
+                    retract_move(test_board, start, end_square, initial_piece)
             # print("pawn", new_legal_moves)
             return new_legal_moves
         final_list = filter_check(test_board, move_number, pawn_moves_w, start)
@@ -63,30 +66,31 @@ def legal_pawn_moves(board, start, move_number):
     if not switch_player(move_number):
         if start[0] == 7:
             if check_square(board, [start[0] - 1, start[1]]) == ".":
-                pawn_moves_b.append((start[0] - 1, start[1]))
+                pawn_moves_b.append((start, [start[0] - 1, start[1]]))
                 if check_square(board, [start[0] - 2, start[1]]) == ".":
-                    pawn_moves_b.append((start[0] - 2, start[1]))
+                    pawn_moves_b.append((start, [start[0] - 2, start[1]]))
         elif start[0] != 7:
             if check_square(board, [start[0] - 1, start[1]]) == "." and start[0] - 1 >= 1:
-                pawn_moves_b.append((start[0] - 1, start[1]))
+                pawn_moves_b.append((start, [start[0] - 1, start[1]]))
         if check_square(board, (start[0] - 1, start[1] - 1)):
             if 65 <= ord(check_square(board, [start[0] - 1, start[1] - 1])) <= 90 and 0 <= start[1] - 1 <= 8 \
                     and start[0] - 1 >= 1:
-                pawn_moves_b.append((start[0] - 1, start[1] - 1))
+                pawn_moves_b.append((start, [start[0] - 1, start[1] - 1]))
         if check_square(board, (start[0] - 1, start[1] + 1)):
             if 65 <= ord(check_square(board, [start[0] - 1, start[1] + 1])) <= 90 and 0 <= start[1] + 1 <= 8 \
                     and start[0] - 1 >= 1:
-                pawn_moves_b.append((start[0] - 1, start[1] + 1))
+                pawn_moves_b.append((start, [start[0] - 1, start[1] + 1]))
         if check(board, move_number):
             new_legal_moves = []
             for i in range(0, len(pawn_moves_b)):
-                initial_piece = find_piece(board, pawn_moves_b[i])
-                update_board(test_board, start, pawn_moves_b[i])
+                end_square = pawn_moves_b[i][1]
+                initial_piece = find_piece(board, end_square)
+                update_board(test_board, start, end_square)
                 if not check(test_board, move_number):
                     new_legal_moves.append(pawn_moves_b[i])
-                    retract_move(board, start, pawn_moves_b[i], initial_piece)
+                    retract_move(board, start, end_square, initial_piece)
                 else:
-                    retract_move(test_board, start, pawn_moves_b[i], initial_piece)
+                    retract_move(test_board, start, end_square, initial_piece)
             # print("pawn", new_legal_moves)
             return new_legal_moves
         final_list = filter_check(test_board, move_number, pawn_moves_b, start)
@@ -100,21 +104,21 @@ def legal_knight_moves(board, start, move_number):
     test_board = board.copy()
     if switch_player(move_number):
         if validate_move(board, [start[0] + 1, start[1] + 2], move_number):
-            legal_knight_w.append((start[0] + 1, start[1] + 2))
+            legal_knight_w.append((start, [start[0] + 1, start[1] + 2]))
         if validate_move(board, [start[0] + 1, start[1] - 2], move_number):
-            legal_knight_w.append((start[0] + 1, start[1] - 2))
+            legal_knight_w.append((start, [start[0] + 1, start[1] - 2]))
         if validate_move(board, [start[0] - 1, start[1] - 2], move_number):
-            legal_knight_w.append((start[0] - 1, start[1] - 2))
+            legal_knight_w.append((start, [start[0] - 1, start[1] - 2]))
         if validate_move(board, [start[0] - 1, start[1] + 2], move_number):
-            legal_knight_w.append((start[0] - 1, start[1] + 2))
+            legal_knight_w.append((start, [start[0] - 1, start[1] + 2]))
         if validate_move(board, [start[0] + 2, start[1] - 1], move_number):
-            legal_knight_w.append((start[0] + 2, start[1] - 1))
+            legal_knight_w.append((start, [start[0] + 2, start[1] - 1]))
         if validate_move(board, [start[0] + 2, start[1] + 1], move_number):
-            legal_knight_w.append((start[0] + 2, start[1] + 1))
+            legal_knight_w.append((start, [start[0] + 2, start[1] + 1]))
         if validate_move(board, [start[0] - 2, start[1] + 1], move_number):
-            legal_knight_w.append((start[0] - 2, start[1] + 1))
+            legal_knight_w.append((start, [start[0] - 2, start[1] + 1]))
         if validate_move(board, [start[0] - 2, start[1] - 1], move_number):
-            legal_knight_w.append((start[0] - 2, start[1] - 1))
+            legal_knight_w.append((start, [start[0] - 2, start[1] - 1]))
         if check(board, move_number):
             new = filter_check(test_board, move_number, legal_knight_w, start)
             # print("knight", new)
@@ -124,21 +128,21 @@ def legal_knight_moves(board, start, move_number):
         return final_list
     if not switch_player(move_number):
         if validate_move(board, [start[0] + 1, start[1] + 2], move_number):
-            legal_knight_b.append((start[0] + 1, start[1] + 2))
+            legal_knight_b.append((start, [start[0] + 1, start[1] + 2]))
         if validate_move(board, [start[0] + 1, start[1] - 2], move_number):
-            legal_knight_b.append((start[0] + 1, start[1] - 2))
+            legal_knight_b.append((start, [start[0] + 1, start[1] - 2]))
         if validate_move(board, [start[0] - 1, start[1] - 2], move_number):
-            legal_knight_b.append((start[0] - 1, start[1] - 2))
+            legal_knight_b.append((start, [start[0] - 1, start[1] - 2]))
         if validate_move(board, [start[0] - 1, start[1] + 2], move_number):
-            legal_knight_b.append((start[0] - 1, start[1] + 2))
+            legal_knight_b.append((start, [start[0] - 1, start[1] + 2]))
         if validate_move(board, [start[0] + 2, start[1] - 1], move_number):
-            legal_knight_b.append((start[0] + 2, start[1] - 1))
+            legal_knight_b.append((start, [start[0] + 2, start[1] - 1]))
         if validate_move(board, [start[0] + 2, start[1] + 1], move_number):
-            legal_knight_b.append((start[0] + 2, start[1] + 1))
+            legal_knight_b.append((start, [start[0] + 2, start[1] + 1]))
         if validate_move(board, [start[0] - 2, start[1] + 1], move_number):
-            legal_knight_b.append((start[0] - 2, start[1] + 1))
+            legal_knight_b.append((start, [start[0] - 2, start[1] + 1]))
         if validate_move(board, [start[0] - 2, start[1] - 1], move_number):
-            legal_knight_b.append((start[0] - 2, start[1] - 1))
+            legal_knight_b.append((start, [start[0] - 2, start[1] - 1]))
         if check(board, move_number):
             new = filter_check(test_board, move_number, legal_knight_b, start)
             # print("knight", new)
@@ -157,30 +161,30 @@ def legal_bishop_moves(board, start, move_number):
             break
         else:
             if move_number % 2 == 0:
-                bishop_moves_w.append((start[0] + (i * -1), start[1] + (i * 1)))
+                bishop_moves_w.append((start, [start[0] + (i * -1), start[1] + (i * 1)]))
             else:
-                bishop_moves_b.append((start[0] + (i * -1), start[1] + (i * 1)))
+                bishop_moves_b.append((start, [start[0] + (i * -1), start[1] + (i * 1)]))
     for j in range(1, 8):
         if not validate_move(board, [start[0] + (j * 1), start[1] + (j * 1)], move_number):
             break
         else:
-            bishop_moves_w.append((start[0] + (j * 1), start[1] + (j * 1)))
+            bishop_moves_w.append((start, [start[0] + (j * 1), start[1] + (j * 1)]))
     for i in range(1, 8):
         if not validate_move(board, [start[0] + (i * (-1)), start[1] + (i * -1)], move_number):
             break
         else:
             if move_number % 2 == 0:
-                bishop_moves_w.append((start[0] + (i * (-1)), start[1] + (i * -1)))
+                bishop_moves_w.append((start, [start[0] + (i * (-1)), start[1] + (i * -1)]))
             else:
-                bishop_moves_b.append((start[0] + (i * (-1)), start[1] + (i * -1)))
+                bishop_moves_b.append((start, [start[0] + (i * (-1)), start[1] + (i * -1)]))
     for i in range(1, 8):
         if not validate_move(board, [start[0] + (i * 1), start[1] + (i * -1)], move_number):
             break
         else:
             if move_number % 2 == 0:
-                bishop_moves_w.append((start[0] + (i * 1), start[1] + (i * -1)))
+                bishop_moves_w.append((start, [start[0] + (i * 1), start[1] + (i * -1)]))
             else:
-                bishop_moves_b.append((start[0] + (i * 1), start[1] + (i * -1)))
+                bishop_moves_b.append((start, [start[0] + (i * 1), start[1] + (i * -1)]))
 
     if move_number % 2 == 0:
         if check(board, move_number):
@@ -209,41 +213,41 @@ def legal_rook_moves(board, start, move_number):
             break
         else:
             if move_number % 2 == 0:
-                rook_moves_w.append((start[0], start[1] + (i * 1)))
+                rook_moves_w.append((start, [start[0], start[1] + (i * 1)]))
             else:
-                rook_moves_b.append((start[0], start[1] + (i * 1)))
+                rook_moves_b.append((start, [start[0], start[1] + (i * 1)]))
     for i in range(1, 8):
         if not validate_move(board, [start[0], start[1] + (i * -1)], move_number):
             break
         else:
             if move_number % 2 == 0:
-                rook_moves_w.append((start[0], start[1] + (i * -1)))
+                rook_moves_w.append((start, [start[0], start[1] + (i * -1)]))
             else:
-                rook_moves_b.append((start[0], start[1] + (i * -1)))
+                rook_moves_b.append((start, [start[0], start[1] + (i * -1)]))
     for i in range(1, 8):
         if not validate_move(board, [start[0] + (i * 1), start[1]], move_number):
             break
         else:
             if move_number % 2 == 0:
-                rook_moves_w.append((start[0] + (i * 1), start[1]))
+                rook_moves_w.append((start, [start[0] + (i * 1), start[1]]))
             else:
-                rook_moves_b.append((start[0] + (i * 1), start[1]))
+                rook_moves_b.append((start, [start[0] + (i * 1), start[1]]))
     for i in range(1, 8):
         if not validate_move(board, [start[0] + (i * -1), start[1]], move_number):
             break
         else:
             if move_number % 2 == 0:
-                rook_moves_w.append((start[0] + (i * -1), start[1]))
+                rook_moves_w.append((start, [start[0] + (i * -1), start[1]]))
             else:
-                rook_moves_b.append((start[0] + (i * -1), start[1]))
+                rook_moves_b.append((start, [start[0] + (i * -1), start[1]]))
     if move_number % 2 == 0:
-        print("rooks starting is:", start)
+        # print("rooks starting is:", start)
         if check(board, move_number):
             new = filter_check(test_board, move_number, rook_moves_w, start)
-            print("rook", new)
+            # print("rook", new)
             return new
         final_list = filter_check(test_board, move_number, rook_moves_w, start)
-        print("rook", final_list)
+        # print("rook", final_list)
         return final_list
     else:
         if check(board, move_number):
@@ -263,14 +267,14 @@ def legal_queen_moves(board, start, move_number):
     return queen_moves
 
 
-def legal_king_moves(board, move_number):
+def legal_king_moves(start, board, move_number):
     test_board = board.copy()
     possible_moves = king_possibilities(board, move_number)
     legal_moves = []
     # Accounts for edges, but still has to be validated and make sure no checks
     for i in possible_moves:
         if validate_move(board, i, move_number) and controlled_squares(board, move_number, i):
-            legal_moves.append(i)
+            legal_moves.append((start, i))
     if check(board, move_number):
         new = filter_check(test_board, move_number, legal_moves, king_position(board, move_number))
         # print("king", new)
@@ -283,13 +287,14 @@ def legal_king_moves(board, move_number):
 def filter_check(board, move_number, legal_moves, start):
     new_legal_moves = []
     for i in range(0, len(legal_moves)):
-        initial_piece = find_piece(board, legal_moves[i])
-        update_board(board, start, legal_moves[i])
+        end_square = legal_moves[i][1]
+        initial_piece = find_piece(board, end_square)
+        update_board(board, start, end_square)
         if not check(board, move_number):
             new_legal_moves.append(legal_moves[i])
-            retract_move(board, start, legal_moves[i], initial_piece)
+            retract_move(board, start, end_square, initial_piece)
         else:
-            retract_move(board, start, legal_moves[i], initial_piece)
+            retract_move(board, start, end_square, initial_piece)
     return new_legal_moves
 
 
@@ -313,67 +318,110 @@ def make_legal_move(move, board, start, end, move_number, en_passant_square, kin
                     rook_b_r, promotion_piece):
     """This function makes a move if it is legal"""
     # this function should have essentially what i had in main at first without making the move
+    test_board = board.copy()
+    valid_move = False
     piece = find_piece(board, start)
-    if move[0] == "O-O":
-        castle(board, move[0], move_number, king_w, king_b, rook_w_l, rook_w_r, rook_b_l, rook_b_r)
-    elif move[0] == "O-O-O":
-        castle(board, move[0], move_number, king_w, king_b, rook_w_l, rook_w_r, rook_b_l, rook_b_r)
-    else:
-        if switch_player(move_number):  # for whites move
-            if (65 <= ord(piece) <= 90) and (validate_move(board, end, move_number)):
-                if piece == "P":
-                    if pawn(board, start, end, move_number):
-                        if end[0] == 8:
+    end_piece = find_piece(board, end)
+
+    if switch_player(move_number):  # for whites move
+        if (65 <= ord(piece) <= 90) and (validate_move(board, end, move_number)):
+            if piece == "P":
+                if pawn(board, start, end, move_number):
+                    if end[0] == 8:
+                        promotion(test_board, start, end, promotion_piece)
+                        if not check(test_board, move_number):
+                            retract_move(test_board, start, end, end_piece)
                             promotion(board, start, end, promotion_piece)
+                            return True
                         else:
-                            update_board(board, start, end)
+                            valid_move = False
                     else:
-                        if can_en_passant(board, en_passant_square, end, start, move_number):
+                        valid_move = True
+                else:
+                    if can_en_passant(board, en_passant_square, end, start, move_number):
+                        execute_enpassant(test_board, start, end, move_number)
+                        if not check(test_board, move_number):
+                            retract_move(test_board, start, end, end_piece)
                             execute_enpassant(board, start, end, move_number)
-                elif piece == "K":
-                    if king(start, end):
-                        if controlled_squares(board, move_number, end):
-                            update_board(board, start, end)
-                elif piece == "N":
-                    if knight(start, end):
-                        update_board(board, start, end)
-                elif piece == "B":
-                    if bishop(board, start, end):
-                        update_board(board, start, end)
-                elif piece == "Q":
-                    if queen(board, start, end):
-                        update_board(board, start, end)
-                elif piece == "R":
-                    if rook(board, start, end):
-                        update_board(board, start, end)
+                            return True
+                        else:
+                            return False
+            elif piece == "K":
+                if king(start, end):
+                    if controlled_squares(board, move_number, end):
+                        valid_move = True
+            elif piece == "N":
+                if knight(start, end):
+                    valid_move = True
+            elif piece == "B":
+                if bishop(board, start, end):
+                    valid_move = True
+            elif piece == "Q":
+                if queen(board, start, end):
+                    valid_move = True
+            elif piece == "R":
+                if rook(board, start, end):
+                    valid_move = True
+        else:
+            valid_move = False
+        if valid_move:
+            update_board(test_board, start, end)
+            if not check(test_board, move_number):
+                retract_move(test_board, start, end, end_piece)
+                update_board(board, start, end)
+                return True
             else:
+                retract_move(test_board, start, end, end_piece)
+                print("Illegal Move")
                 return False
-        if not switch_player(move_number):
-            if (97 <= ord(piece) <= 122) and validate_move(board, end, move_number):
-                if piece == "p":
-                    if pawn(board, start, end, move_number):
-                        if end[0] == 1:
+    if not switch_player(move_number):
+        if (97 <= ord(piece) <= 122) and validate_move(board, end, move_number):
+            if piece == "p":
+                if pawn(board, start, end, move_number):
+                    if end[0] == 1:
+                        promotion(test_board, start, end, promotion_piece)
+                        if not check(test_board, move_number):
+                            retract_move(test_board, start, end, end_piece)
                             promotion(board, start, end, promotion_piece)
+                            return True
                         else:
-                            update_board(board, start, end)
+                            valid_move = False
                     else:
-                        if can_en_passant(board, en_passant_square, end, start, move_number):
+                        valid_move = True
+                else:
+                    if can_en_passant(board, en_passant_square, end, start, move_number):
+                        execute_enpassant(test_board, start, end, move_number)
+                        if not check(test_board, move_number):
+                            retract_move(test_board, start, end, end_piece)
                             execute_enpassant(board, start, end, move_number)
-                elif piece == "k":
-                    if king(start, end):
-                        if controlled_squares(board, move_number, end):
-                            update_board(board, start, end)
-                elif piece == "n":
-                    if knight(start, end):
-                        update_board(board, start, end)
-                elif piece == "b":
-                    if bishop(board, start, end):
-                        update_board(board, start, end)
-                elif piece == "q":
-                    if queen(board, start, end):
-                        update_board(board, start, end)
-                elif piece == "r":
-                    if rook(board, start, end):
-                        update_board(board, start, end)
+                            return True
+                        else:
+                            valid_move = False
+            elif piece == "k":
+                if king(start, end):
+                    if controlled_squares(board, move_number, end):
+                        valid_move = True
+            elif piece == "n":
+                if knight(start, end):
+                    valid_move = True
+            elif piece == "b":
+                if bishop(board, start, end):
+                    valid_move = True
+            elif piece == "q":
+                if queen(board, start, end):
+                    valid_move = True
+            elif piece == "r":
+                if rook(board, start, end):
+                    valid_move = True
+        else:
+            valid_move = False
+        if valid_move:
+            update_board(test_board, start, end)
+            if not check(test_board, move_number):
+                retract_move(test_board, start, end, end_piece)
+                update_board(board, start, end)
+                return True
             else:
+                retract_move(test_board, start, end, end_piece)
+                print("Illegal Move")
                 return False

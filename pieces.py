@@ -1,6 +1,6 @@
 from player import switch_player
 import numpy as np
-from board import check_square, clear_path
+from board import check_square, clear_path, validate_move
 
 
 def pawn(board, start, end, move_number):
@@ -132,7 +132,7 @@ def queen(board, start, end):
 
 
 def controlled_squares(board, move_number, king_end):
-    """If the piece CAN move to the "king_end" square, it will return FALSE"""
+    """If the enemy piece CAN move to the "king_end" square, it will return FALSE"""
     if switch_player(move_number):
         for i in range(0, len(board)):
             for j in range(0, len(board[i])):
@@ -314,14 +314,16 @@ def castle(board, move, move_number, king_count_w, king_count_b, rook_count_w_l,
            rook_count_b_r):
     if switch_player(move_number):
         if move == "O-O" and king_count_w == 0 and rook_count_w_r == 0 and not check(board, move_number) \
-                and controlled_squares(board, move_number, [1, 5]) and controlled_squares(board, move_number, [1, 6]):
+                and controlled_squares(board, move_number, [1, 5]) and controlled_squares(board, move_number, [1, 6])\
+                and validate_move(board, [1, 5], move_number) and validate_move(board, [1, 6], move_number):
             board[0][5] = board[0][7]
             board[0][6] = board[0][4]
             board[0][4] = "."
             board[0][7] = "."
 
         elif move == "O-O-O" and king_count_w == 0 and rook_count_w_l == 0 and not check(board, move_number) \
-                and controlled_squares(board, move_number, [1, 3]) and controlled_squares(board, move_number, [1, 2]):
+                and controlled_squares(board, move_number, [1, 3]) and controlled_squares(board, move_number, [1, 2]) \
+                and validate_move(board, [1, 3], move_number) and validate_move(board, [1, 2], move_number):
             board[0][3] = board[0][0]
             board[0][2] = board[0][4]
             board[0][4] = "."
@@ -329,14 +331,16 @@ def castle(board, move, move_number, king_count_w, king_count_b, rook_count_w_l,
 
     elif not switch_player(move_number):
         if move == "O-O" and king_count_b == 0 and rook_count_b_l == 0 and not check(board, move_number) \
-                and controlled_squares(board, move_number, [8, 5]) and controlled_squares(board, move_number, [8, 6]):
+                and controlled_squares(board, move_number, [8, 5]) and controlled_squares(board, move_number, [8, 6]) \
+                and validate_move(board, [8, 5], move_number) and validate_move(board, [8, 6], move_number):
             board[7][5] = board[7][7]
             board[7][6] = board[7][4]
             board[7][4] = "."
             board[7][7] = "."
 
         elif move == "O-O-O" and king_count_b == 0 and rook_count_b_r == 0 and not check(board, move_number) \
-                and controlled_squares(board, move_number, [8, 3]) and controlled_squares(board, move_number, [8, 2]):
+                and controlled_squares(board, move_number, [8, 3]) and controlled_squares(board, move_number, [8, 2]) \
+                and validate_move(board, [8, 3], move_number) and validate_move(board, [8, 2], move_number):
             board[7][2] = board[7][4]
             board[7][3] = board[7][0]
             board[7][4] = "."
